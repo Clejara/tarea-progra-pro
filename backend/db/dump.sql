@@ -18,6 +18,7 @@ CREATE TABLE Consultas (
     CONSTRAINT fk_rut
         FOREIGN KEY(rut) 
         REFERENCES Pacientes(rut)
+        ON DELETE CASCADE
 );
 
 INSERT INTO Pacientes (rut, nombre, direccion, telefono) VALUES
