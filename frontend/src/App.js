@@ -1,12 +1,18 @@
 
 import React from 'react';
 import CreatePaciente from './components/CreatePaciente';
-import ViewPacientes from './components/ViewPacientes';
-
 import CreateConsulta from './components/CreateConsulta';
+import ViewPacientes from './components/ViewPacientes';
 import ViewConsultas from './components/ViewConsultas';
+import usePacientesConsultas from './usePacientesConsultas';
+
 
 function App() {
+  const { pacientes, consultas, loading, error, fetchPacientes, fetchConsultas } = usePacientesConsultas();
+  const handleDeleteComplete = () => {
+    fetchPacientes();
+    fetchConsultas();
+  };
   return (
     <div className="App">
       <header className="App-header">
@@ -14,9 +20,9 @@ function App() {
       </header>
       <main>
         <CreatePaciente />
-        <ViewPacientes />
         <CreateConsulta />
-        <ViewConsultas />
+        <ViewPacientes pacientes={pacientes} onDeleteComplete={handleDeleteComplete} />
+        <ViewConsultas consultas={consultas} loading={loading} error={error} onDeleteComplete={handleDeleteComplete}/>
       </main>
     </div>
   );

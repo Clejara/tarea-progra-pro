@@ -59,4 +59,23 @@ router.put('/pacientes/:rut', async (req, res) => {
   }
 });
 
+
+router.delete('/pacientes/:rut', async (req, res) => {
+  const { rut } = req.params;
+  try {
+    const deletePaciente = await pool.query(
+      'DELETE FROM Pacientes WHERE rut = $1 RETURNING *',
+      [rut]
+    );
+    if (deletePaciente.rowCount === 0) {
+      return res.status(404).json({ error: 'Paciente no encontrado' });
+    }
+
+    res.status(200).json({ message: 'Paciente borrado exitosamente' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Error de servidor');
+  }
+});
+
 module.exports = router;

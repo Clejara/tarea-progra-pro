@@ -1,31 +1,10 @@
 // frontend/src/components/ViewPacientes.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import EditPaciente from './EditPaciente';
+import RemovePaciente from './RemovePaciente';
 
-function ViewPacientes() {
-  const [pacientes, setPacientes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+function ViewPacientes({ pacientes, onDeleteComplete }) {
   const [editing, setEditing] = useState(null);
-
-  const fetchPacientes = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/pacientes');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setPacientes(data);
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPacientes();
-  }, []);
 
   const handleEdit = (rut) => {
     setEditing(rut);
@@ -33,11 +12,8 @@ function ViewPacientes() {
 
   const handleEditComplete = () => {
     setEditing(null);
-    fetchPacientes();
+    onDeleteComplete();
   };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div>
@@ -53,6 +29,7 @@ function ViewPacientes() {
               <strong>Direccion:</strong> {paciente.direccion} <br />
               <strong>Telefono:</strong> {paciente.telefono} <br />
               <button onClick={() => handleEdit(paciente.rut)}>Edit</button>
+              <RemovePaciente rut={paciente.rut} onDeleteComplete={onDeleteComplete} />
             </li>
           ))}
         </ul>

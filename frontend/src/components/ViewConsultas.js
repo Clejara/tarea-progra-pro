@@ -1,31 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import EditConsulta from './EditConsulta';
+import RemoveConsulta from './RemoveConsulta';
 
-function ViewConsultas() {
-  const [consultas, setConsultas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+function ViewConsultas({ consultas, loading, error, onDeleteComplete}) {
   const [editing, setEditing] = useState(null);
 
-  const fetchConsultas = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/consultas');
-      if (!response.ok) {
-        throw new Error('Error de servidor');
-      }
-      const data = await response.json();
-      console.log(data); 
-      setConsultas(data);
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchConsultas();
-  }, []);
 
   const handleEdit = (codigo) => {
     setEditing(codigo);
@@ -33,8 +12,13 @@ function ViewConsultas() {
 
   const handleEditComplete = () => {
     setEditing(null);
-    fetchConsultas();
+    onDeleteComplete();
   };
+
+  const handleDeleteComplete = () => {
+    onDeleteComplete();
+ };
+
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -55,6 +39,7 @@ function ViewConsultas() {
               <strong>Numero de clinica:</strong> {consulta.nro_clinica} <br />
               <strong>Rut Paciente:</strong> {consulta.rut} <br />
               <button onClick={() => handleEdit(consulta.codigo)}>Editar</button>
+              <RemoveConsulta codigo={consulta.codigo} onDeleteComplete={handleDeleteComplete} />
             </li>
           ))}
         </ul>
